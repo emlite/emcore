@@ -1,14 +1,15 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.25)
 project(emcore VERSION 0.1.0 LANGUAGES C)
 
 add_library(emcore)
+set(EMCORE_HEADERS include/emcore/emcore.h)
 target_sources(emcore 
     PRIVATE 
         src/lib.c
     PUBLIC 
         FILE_SET HEADERS
         BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/include
-        FILES include/emcore/core.h
+        FILES ${EMCORE_HEADERS}
 )
 set_target_properties(emcore PROPERTIES LINKER_LANGUAGE C)
 

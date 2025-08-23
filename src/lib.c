@@ -1,4 +1,4 @@
-#include <emcore/core.h>
+#include <emcore/emcore.h>
 #include <stdint.h>
 
 EMLITE_USED int emlite_target(void) { return 1033; }
