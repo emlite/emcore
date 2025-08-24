@@ -3,9 +3,15 @@ project(emcore VERSION 0.1.0 LANGUAGES C)
 
 add_library(emcore)
 set(EMCORE_HEADERS include/emcore/emcore.h)
+set(EMCORE_SRCS src/lib.c)
+
+if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2" OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+  list(APPEND EMCORE_SRCS src/env.c src/wasip2adapter.c)
+endif()
+
 target_sources(emcore 
     PRIVATE 
-        src/lib.c
+        ${EMCORE_SRCS}
     PUBLIC 
         FILE_SET HEADERS
         BASE_DIRS ${CMAKE_CURRENT_LIST_DIR}/include
@@ -74,3 +80,8 @@ install(
     "${CMAKE_CURRENT_BINARY_DIR}/emcoreConfigVersion.cmake"
   DESTINATION "${emcore_INSTALL_CMAKEDIR}"
 )
+
+if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2" OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+  install(FILES ${CMAKE_CURRENT_LIST_DIR}/src/env_component_type.o
+        DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif()
