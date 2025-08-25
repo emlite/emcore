@@ -10,9 +10,6 @@ if(@EMLITE_WITH_DLMALLOC@)
   find_dependency(dlmalloc)
 endif()
 
-set(emcore_COMPONENT_TYPE_OBJECT
-    "${PACKAGE_PREFIX_DIR}/${CMAKE_INSTALL_LIBDIR}/env_component_type.o")
-
 include("${CMAKE_CURRENT_LIST_DIR}/emcoreTargets.cmake")
 
 set(emcore_VERSION "@PACKAGE_VERSION@")

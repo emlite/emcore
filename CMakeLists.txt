@@ -81,7 +81,17 @@ install(
   DESTINATION "${emcore_INSTALL_CMAKEDIR}"
 )
 
-if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2" OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2"
+ OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+
   install(FILES ${CMAKE_CURRENT_LIST_DIR}/src/env_component_type.o
-        DESTINATION ${CMAKE_INSTALL_LIBDIR})
+          DESTINATION ${CMAKE_INSTALL_LIBDIR})
+
+  add_library(emcore_component_type INTERFACE)
+  target_link_libraries(emcore_component_type INTERFACE
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/env_component_type.o>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_LIBDIR}/env_component_type.o>"
+  )
+  add_library(emcore::component_type ALIAS emcore_component_type)
+  install(TARGETS emcore_component_type EXPORT emcoreTargets)
 endif()
