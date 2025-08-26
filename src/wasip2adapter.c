@@ -73,6 +73,10 @@ EMLITE_USED Handle emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv,
   return fn(argv, data);
 }
 
+uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t data) {
+  return emlite_env_dyncall_apply(fidx, argv, data);
+}
+
 #define FWD0(ret, pub, gen)                                                    \
   EMLITE_USED ret pub(void) { return gen(); }
 #define FWD1(ret, pub, gen, T1)                                                \
