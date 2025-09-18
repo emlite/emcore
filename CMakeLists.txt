@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.25)
-project(emcore VERSION 0.1.3 LANGUAGES C)
+project(emcore VERSION 0.1.4 LANGUAGES C)
 
 add_library(emcore)
 set(EMCORE_HEADERS include/emcore/emcore.h)
