@@ -2,11 +2,6 @@
 #include <emcore/emcore.h>
 #include <stdint.h>
 
-typedef struct EmliteCbPack {
-    Callback fn;
-    Handle   user_data; // pinned handle; dec-ref on finalize
-} EmliteCbPack;
-
 
 static inline EmliteCbPack *emlite_unpack_data(Handle data_handle) {
   // data_handle is a handle to a JS BigInt containing the pointer

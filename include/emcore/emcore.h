@@ -25,6 +25,11 @@ typedef uint32_t Handle;
 /// A C function that can be called from Javascript.
 typedef Handle (*Callback)(Handle, Handle data);
 
+typedef struct EmliteCbPack {
+    Callback fn;
+    Handle   user_data; // pinned handle; dec-ref on finalize
+} EmliteCbPack;
+
 enum EMLITE_PREDEFINED_HANDLES {
     EMLITE_NULL = 0,
     EMLITE_UNDEFINED,
