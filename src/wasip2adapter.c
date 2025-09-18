@@ -37,9 +37,7 @@ uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t
 }
 
 int32_t exports_emlite_env_dyncall_emlite_target(void) {
-  // Delegate to the non-P2 version function to keep a single source of truth
-  extern int emlite_target(void);
-  return (int32_t) emlite_target();
+  return EMLITE_TARGET;
 }
 
 #define FWD0(ret, pub, gen)                                                    \

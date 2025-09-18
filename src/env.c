@@ -143,6 +143,7 @@ extern int32_t __wasm_import_emlite_env_host_emlite_val_make_callback(int32_t, i
 // Exported Functions from `emlite:env/dyncall@0.1.0`
 
 
+
 // Canonical ABI intrinsics
 
 __attribute__((__weak__, __export_name__("cabi_realloc")))
@@ -417,6 +418,12 @@ __attribute__((__export_name__("emlite:env/dyncall@0.1.0#apply")))
 int32_t __wasm_export_exports_emlite_env_dyncall_apply(int32_t arg, int32_t arg0, int32_t arg1) {
   uint32_t ret = exports_emlite_env_dyncall_apply((uint32_t) (arg), (uint32_t) (arg0), (uint32_t) (arg1));
   return (int32_t) (ret);
+}
+
+__attribute__((__export_name__("emlite:env/dyncall@0.1.0#emlite-target")))
+int32_t __wasm_export_exports_emlite_env_dyncall_emlite_target(void) {
+  int32_t ret = exports_emlite_env_dyncall_emlite_target();
+  return ret;
 }
 
 // Ensure that the *_component_type.o object is linked in

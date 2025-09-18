@@ -1,7 +1,7 @@
 #include <emcore/emcore.h>
 #include <stdint.h>
 
-EMLITE_USED int emlite_target(void) { return 1038; }
+EMLITE_USED int emlite_target(void) { return EMLITE_TARGET; }
 
 #if __has_include(<errno.h>)
 #include <errno.h>
