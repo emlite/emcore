@@ -1,80 +1,50 @@
 #include "env.h"
 #include <emcore/emcore.h>
+#include <stdint.h>
 
-static Callback *cb_tab = NULL;
-static uint32_t cb_cap = 0;
+typedef struct EmliteCbPack {
+    Callback fn;
+    Handle   user_data; // pinned handle; dec-ref on finalize
+} EmliteCbPack;
 
-static uint32_t *free_stack = NULL;
-static uint32_t free_len = 0;
-static uint32_t free_cap = 0;
 
-static int ensure_cb_capacity(uint32_t need) {
-  if (cb_cap >= need)
-    return 1;
-  uint32_t new_cap = cb_cap ? cb_cap : 16;
-  while (new_cap < need)
-    new_cap <<= 1;
-  void *p = emlite_realloc(cb_tab, new_cap * sizeof(Callback));
-  if (!p)
+static inline EmliteCbPack *emlite_unpack_data(Handle data_handle) {
+  // data_handle is a handle to a JS BigInt containing the pointer
+  uint64_t ptr = emlite_val_get_value_biguint(data_handle);
+  return (EmliteCbPack *)(uintptr_t)ptr;
+}
+
+EMLITE_USED Handle emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t data) {
+  // argv == 0 is the sentinel to finalize/free the packed closure
+  if (argv == 0) {
+    EmliteCbPack *pack = emlite_unpack_data(data);
+    if (pack && pack->fn) {
+      // Allow language shim to clean up (e.g., Rust drops Box)
+      (void)pack->fn(0 /* sentinel finalize */, pack->user_data);
+    }
+    if (pack) {
+      // Release the pinned user_data handle and free the pack
+      emlite_val_dec_ref(pack->user_data);
+      emlite_free(pack);
+    }
+    // Also release the JS handle that held the pointer value
+    emlite_val_dec_ref(data);
     return 0;
-
-  memset((uint8_t *)p + cb_cap * sizeof(Callback), 0,
-         (new_cap - cb_cap) * sizeof(Callback));
-  cb_tab = (Callback *)p;
-  cb_cap = new_cap;
-  return 1;
-}
-static int free_push(uint32_t idx) {
-  if (free_len == free_cap) {
-    uint32_t nc = free_cap ? free_cap << 1 : 16;
-    void *p = emlite_realloc(free_stack, nc * sizeof(uint32_t));
-    if (!p)
-      return 0;
-    free_stack = (uint32_t *)p;
-    free_cap = nc;
   }
-  free_stack[free_len++] = idx;
-  return 1;
-}
-static int free_pop(uint32_t *out) {
-  if (!free_len)
-    return 0;
-  *out = free_stack[--free_len];
-  return 1;
-}
 
-EMLITE_USED Handle emlite_register_callback(Callback fn) {
-  if (!fn)
-    return EMLITE_UNDEFINED;
-  uint32_t idx;
-  if (!free_pop(&idx)) {
-    idx = cb_cap;
-    if (!ensure_cb_capacity(idx + 1))
-      return EMLITE_UNDEFINED;
-  }
-  cb_tab[idx] = fn;
-  return idx; // fidx
-}
-
-EMLITE_USED void emlite_unregister_callback(Handle fidx) {
-  if (fidx < cb_cap && cb_tab[fidx]) {
-    cb_tab[fidx] = NULL;
-    (void)free_push(fidx);
-  }
-}
-
-EMLITE_USED Handle emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv,
-                                            uint32_t data) {
-  if (fidx >= cb_cap)
-    return EMLITE_UNDEFINED;
-  Callback fn = cb_tab[fidx];
-  if (!fn)
-    return EMLITE_UNDEFINED;
-  return fn(argv, data);
+  EmliteCbPack *pack = emlite_unpack_data(data);
+  if (!pack || !pack->fn) return EMLITE_UNDEFINED;
+  return pack->fn(argv, pack->user_data);
 }
 
 uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t data) {
   return emlite_env_dyncall_apply(fidx, argv, data);
+}
+
+int32_t exports_emlite_env_dyncall_emlite_target(void) {
+  // Delegate to the non-P2 version function to keep a single source of truth
+  extern int emlite_target(void);
+  return (int32_t) emlite_target();
 }
 
 #define FWD0(ret, pub, gen)                                                    \

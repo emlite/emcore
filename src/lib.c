@@ -35,7 +35,7 @@ void abort(void) { __builtin_unreachable(); }
 
 // If we don't have the above, we most likely don't have
 // sbrk. If we link dlmalloc, it expects sbrk:
-#define WASM_PAGESIZE 65536u
+#define WASM_PAGESIZE ((size_t)65536u)
 
 extern unsigned char __heap_base;
 static uintptr_t heap_top = (uintptr_t)&__heap_base;
@@ -51,7 +51,8 @@ void *sbrk(intptr_t increment) {
     if (increment == 0) {
         // The wasm spec doesn't guarantee that memory.grow
         // of 0 always succeeds.
-        return (void *)(__builtin_wasm_memory_size(0) * WASM_PAGESIZE);
+        size_t pages = __builtin_wasm_memory_size(0);
+        return (void *)((uintptr_t)(pages * WASM_PAGESIZE));
     }
 
     // We only support page-size increments.
@@ -64,14 +65,14 @@ void *sbrk(intptr_t increment) {
         abort();
     }
 
-    uintptr_t old = __builtin_wasm_memory_grow(0, (uintptr_t)increment / WASM_PAGESIZE);
+    size_t old = __builtin_wasm_memory_grow(0, (size_t)increment / WASM_PAGESIZE);
 
-    if (old == SIZE_MAX) {
+    if (old == (size_t)-1) {
         errno = ENOMEM;
         return (void *)-1;
     }
 
-    return (void *)(old * WASM_PAGESIZE);
+    return (void *)((uintptr_t)(old * WASM_PAGESIZE));
 }
 
 void *emlite_malloc(size_t size) {

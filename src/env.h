@@ -68,6 +68,7 @@ extern uint32_t emlite_env_host_emlite_val_make_callback(uint32_t fidx, uint32_t
 
 // Exported Functions from `emlite:env/dyncall@0.1.0`
 uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t data);
+int32_t  exports_emlite_env_dyncall_emlite_target(void);
 
 // Helper Functions
 
