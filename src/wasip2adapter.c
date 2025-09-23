@@ -46,7 +46,7 @@ uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t
   EMLITE_USED ret pub(T1 a, T2 b, T3 c) { return gen(a, b, c); }
 
 FWD0(void, emlite_init_handle_table, emlite_env_host_emlite_init_handle_table);
-
+FWD0(int, emlite_target, emlite_env_host_emlite_target);
 FWD0(Handle, emlite_val_new_array, emlite_env_host_emlite_val_new_array);
 FWD0(Handle, emlite_val_new_object, emlite_env_host_emlite_val_new_object);
 FWD1(Handle, emlite_val_make_bool, emlite_env_host_emlite_val_make_bool, bool);
