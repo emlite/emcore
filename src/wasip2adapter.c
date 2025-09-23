@@ -36,10 +36,6 @@ uint32_t exports_emlite_env_dyncall_apply(uint32_t fidx, uint32_t argv, uint32_t
   return emlite_env_dyncall_apply(fidx, argv, data);
 }
 
-int32_t exports_emlite_env_dyncall_emlite_target(void) {
-  return EMLITE_TARGET;
-}
-
 #define FWD0(ret, pub, gen)                                                    \
   EMLITE_USED ret pub(void) { return gen(); }
 #define FWD1(ret, pub, gen, T1)                                                \

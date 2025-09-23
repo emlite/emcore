@@ -7,7 +7,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
-#define EMLITE_TARGET 1040
+#define EMLITE_TARGET 1041
 
 #ifndef EMLITE_USED
 #define EMLITE_USED __attribute__((used, visibility("default")))
