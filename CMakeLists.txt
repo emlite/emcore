@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 3.25)
-project(emcore VERSION 0.1.6 LANGUAGES C)
+project(emcore VERSION 0.1.7 LANGUAGES C)
+
+option(EMCORE_WASIP2_COMPONENT "Build wasip2 component" ON)
 
 add_library(emcore)
 set(EMCORE_HEADERS include/emcore/emcore.h)
 set(EMCORE_SRCS src/lib.c)
 
-if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2" OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+if ((CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2" OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2") AND EMCORE_WASIP2_COMPONENT)
   list(APPEND EMCORE_SRCS src/env.c src/wasip2adapter.c)
 endif()
 
@@ -81,8 +83,8 @@ install(
   DESTINATION "${emcore_INSTALL_CMAKEDIR}"
 )
 
-if (CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2"
- OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2")
+if ((CMAKE_C_COMPILER_TARGET STREQUAL "wasm32-wasip2"
+ OR CMAKE_CXX_COMPILER_TARGET STREQUAL "wasm32-wasip2") AND EMCORE_WASIP2_COMPONENT)
 
   install(FILES ${CMAKE_CURRENT_LIST_DIR}/src/env_component_type.o
           DESTINATION ${CMAKE_INSTALL_LIBDIR})
